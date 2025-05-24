@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MessageCircle } from 'lucide-react';
+import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import type { Comment, CommentFormData } from '@/types/comment';
 import CommentItem from './comment-item';
 
@@ -27,11 +28,13 @@ interface CommentListProps {
  * 댓글 작성 폼 컴포넌트
  */
 function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
+  const { user } = useUser();
   const [formData, setFormData] = useState<CommentFormData>({
-    authorName: '',
-    authorEmail: '',
     content: '',
-    agreeToTerms: true
+    agreeToTerms: true,
+    authorName: user?.fullName || '',
+    authorEmail: user?.primaryEmailAddress?.emailAddress || '',
+    authorImageUrl: user?.imageUrl
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,16 +42,6 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
   // 폼 유효성 검사
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.authorName.trim()) {
-      newErrors.authorName = '이름을 입력해주세요.';
-    } else if (formData.authorName.trim().length < 2) {
-      newErrors.authorName = '이름은 2글자 이상 입력해주세요.';
-    }
-
-    if (formData.authorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.authorEmail)) {
-      newErrors.authorEmail = '올바른 이메일 형식을 입력해주세요.';
-    }
 
     if (!formData.content.trim()) {
       newErrors.content = '댓글 내용을 입력해주세요.';
@@ -77,17 +70,19 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
       const newComment: Comment = {
         id: `comment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         postId,
-        authorName: formData.authorName.trim(),
-        authorEmail: formData.authorEmail.trim() || `user${Date.now()}@local.com`,
+        authorName: user?.fullName || '익명',
+        authorEmail: user?.primaryEmailAddress?.emailAddress || '',
+        authorImageUrl: user?.imageUrl,
         content: formData.content.trim(),
         createdAt: new Date(),
-        status: 'approved', // 로컬 환경에서는 자동 승인
+        status: 'approved',
         likeCount: 0,
         dislikeCount: 0,
         reportCount: 0,
         isEdited: false,
         isPinned: false,
-        isAuthor: false
+        isAuthor: false,
+        userId: user?.id
       };
 
       // 부모 컴포넌트에 새 댓글 전달
@@ -95,10 +90,11 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
 
       // 폼 초기화
       setFormData({
-        authorName: formData.authorName, // 이름은 유지
-        authorEmail: formData.authorEmail, // 이메일도 유지 (편의성)
         content: '',
-        agreeToTerms: true
+        agreeToTerms: true,
+        authorName: user?.fullName || '',
+        authorEmail: user?.primaryEmailAddress?.emailAddress || '',
+        authorImageUrl: user?.imageUrl
       });
 
       setErrors({});
@@ -129,44 +125,18 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
         </h3>
       </CardHeader>
       <CardContent>
+        {user && (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 이름 입력 */}
+          {/* 현재 로그인한 사용자 정보 표시 */}
+          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+            <img
+              src={user?.imageUrl}
+              alt={user?.fullName || '사용자'}
+              className="w-8 h-8 rounded-full"
+            />
             <div>
-              <label htmlFor="authorName" className="block text-sm font-medium mb-1">
-                이름 <span className="text-red-500">*</span>
-              </label>
-              <Input
-                id="authorName"
-                type="text"
-                placeholder="이름을 입력해주세요"
-                value={formData.authorName}
-                onChange={(e) => handleInputChange('authorName', e.target.value)}
-                className={errors.authorName ? 'border-red-500' : ''}
-                disabled={isSubmitting}
-              />
-              {errors.authorName && (
-                <p className="text-red-500 text-sm mt-1">{errors.authorName}</p>
-              )}
-            </div>
-
-            {/* 이메일 입력 */}
-            <div>
-              <label htmlFor="authorEmail" className="block text-sm font-medium mb-1">
-                이메일 (선택사항)
-              </label>
-              <Input
-                id="authorEmail"
-                type="email"
-                placeholder="이메일을 입력해주세요"
-                value={formData.authorEmail}
-                onChange={(e) => handleInputChange('authorEmail', e.target.value)}
-                className={errors.authorEmail ? 'border-red-500' : ''}
-                disabled={isSubmitting}
-              />
-              {errors.authorEmail && (
-                <p className="text-red-500 text-sm mt-1">{errors.authorEmail}</p>
-              )}
+              <p className="font-medium">{user?.fullName || '익명'}</p>
+              <p className="text-sm text-gray-500">{user?.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
 
@@ -213,6 +183,7 @@ function CommentForm({ postId, onCommentAdded }: CommentFormProps) {
             </Button>
           </div>
         </form>
+        )}
       </CardContent>
     </Card>
   );
@@ -344,7 +315,30 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       </div>
 
       {/* 댓글 작성 폼 */}
-      <CommentForm postId={postId} onCommentAdded={handleCommentAdded} />
+      <SignedIn>
+        <CommentForm postId={postId} onCommentAdded={handleCommentAdded} />
+      </SignedIn>
+
+      <SignedOut>
+        <Card className="mb-8">
+          <CardContent className="pt-6">
+            <div className="text-center py-6">
+              <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                댓글을 작성하려면 로그인이 필요합니다
+              </h3>
+              <p className="text-gray-500 mb-4">
+                로그인하고 다른 사용자들과 의견을 나눠보세요.
+              </p>
+              <SignInButton mode="modal">
+                <Button variant="outline" size="lg">
+                  로그인하기
+                </Button>
+              </SignInButton>
+            </div>
+          </CardContent>
+        </Card>
+      </SignedOut>
 
       {/* 댓글 목록 */}
       <div>
@@ -352,4 +346,4 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       </div>
     </section>
   );
-} 
+}

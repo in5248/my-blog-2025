@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, Search, X } from 'lucide-react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -106,7 +107,32 @@ export default function Header() {
           </nav>
 
           {/* 우측 액션 버튼들 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            {/* 인증 상태에 따른 버튼 */}
+            <SignedIn>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8",
+                    userButtonPopoverCard: "shadow-xl"
+                  }
+                }}
+              />
+            </SignedIn>
+
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex"
+                >
+                  로그인
+                </Button>
+              </SignInButton>
+            </SignedOut>
+
             {/* 검색 드롭다운 */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -194,8 +220,40 @@ export default function Header() {
                     ))}
                   </nav>
 
+                  {/* 모바일 인증 옵션 */}
+                  <div className="mt-8 pt-6 border-t space-y-4">
+                    <SignedIn>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium text-muted-foreground">계정</h4>
+                        <UserButton
+                          afterSignOutUrl="/"
+                          appearance={{
+                            elements: {
+                              avatarBox: "w-8 h-8",
+                              userButtonPopoverCard: "shadow-xl"
+                            }
+                          }}
+                        />
+                      </div>
+                    </SignedIn>
+
+                    <SignedOut>
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium text-muted-foreground">계정</h4>
+                        <SignInButton mode="modal">
+                          <Button
+                            variant="outline"
+                            className="w-full justify-center"
+                          >
+                            로그인
+                          </Button>
+                        </SignInButton>
+                      </div>
+                    </SignedOut>
+                  </div>
+
                   {/* 모바일 검색 옵션 */}
-                  <div className="mt-8 pt-6 border-t space-y-2">
+                  <div className="mt-4 pt-6 border-t space-y-2">
                     <h4 className="text-sm font-medium text-muted-foreground mb-3">검색</h4>
                     <Button
                       variant="outline"

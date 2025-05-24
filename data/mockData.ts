@@ -276,7 +276,7 @@ export const mockComments: Comment[] = [
     postId: 'post-1',
     authorName: '김개발',
     authorEmail: 'kim@example.com',
-    authorAvatar: '/images/avatar-1.jpg',
+    authorImageUrl: '/images/avatars/default.png',
     content: '좋은 피드백 감사합니다! 다음 포스트에서는 더 실전적인 예제들을 다뤄보겠습니다.',
     createdAt: new Date('2024-01-16T16:20:00Z'),
     status: 'approved',
@@ -485,12 +485,7 @@ export function getCommentStats(postId: string): CommentStats {
   };
 }
 
-/**
- * 최신 포스트 조회 (getRecentPosts와 동일한 기능)
- */
-export function getLatestPosts(limit: number = 5): BlogPost[] {
-  return getRecentPosts(limit);
-}
+// 삭제: getLatestPosts는 아래에서 더 개선된 버전으로 재구현됨
 
 /**
  * 상대적 시간 표시 함수
@@ -642,4 +637,64 @@ export function getPageNumbers(currentPage: number, totalPages: number): number[
   }
   
   return pages;
+}
+
+/**
+ * 관련 포스트 가져오기
+ * @param currentPost 현재 포스트
+ * @param limit 가져올 포스트 개수
+ * @returns 관련도 순으로 정렬된 포스트 배열
+ */
+export function getRelatedPosts(currentPost: BlogPost, limit: number = 3): BlogPost[] {
+  // 현재 포스트를 제외한 발행된 포스트만 필터링
+  const otherPosts = mockPosts.filter(post => 
+    post.id !== currentPost.id && 
+    post.status === 'published'
+  );
+
+  // 각 포스트의 관련도 점수 계산
+  const scoredPosts = otherPosts.map(post => {
+    let score = 0;
+
+    // 1. 같은 카테고리 (+10점)
+    if (post.category.id === currentPost.category.id) {
+      score += 10;
+    }
+
+    // 2. 공통 태그 (태그당 +2점)
+    const commonTags = post.tags.filter(tag => 
+      currentPost.tags.includes(tag)
+    );
+    score += commonTags.length * 2;
+
+    // 3. 최신 포스트 가산점 (최대 5점)
+    const daysDiff = Math.floor(
+      (new Date().getTime() - post.publishedAt.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    score += Math.max(0, 5 - Math.floor(daysDiff / 30)); // 한 달당 1점 감소
+
+    return { post, score };
+  });
+
+  // 점수 기준 내림차순 정렬 후 상위 N개 반환
+  return scoredPosts
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(item => item.post);
+}
+
+/**
+ * 최신 포스트 가져오기
+ * @param limit 가져올 포스트 개수
+ * @param excludeIds 제외할 포스트 ID 목록
+ * @returns 최신 순으로 정렬된 포스트 배열
+ */
+export function getLatestPosts(limit: number = 3, excludeIds: string[] = []): BlogPost[] {
+  return mockPosts
+    .filter(post => 
+      post.status === 'published' && 
+      !excludeIds.includes(post.id)
+    )
+    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+    .slice(0, limit);
 }

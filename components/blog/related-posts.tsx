@@ -340,7 +340,7 @@ export function CompactRelatedPosts({ currentPost, limit = 3 }: Pick<RelatedPost
  * 인라인 관련 포스트 컴포넌트 (본문 중간 삽입용)
  */
 export function InlineRelatedPosts({ currentPost }: Pick<RelatedPostsProps, 'currentPost'>) {
-  const relatedPosts = useMemo(() => getRelatedPosts(currentPost, 1), [currentPost]);
+  const relatedPosts = getRelatedPosts(currentPost, 1);
   
   if (relatedPosts.length === 0) return null;
   

@@ -1,8 +1,10 @@
 'use client';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useUser } from '@clerk/nextjs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, Heart, MessageSquare, Flag } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { CalendarDays, Heart, MessageSquare, Flag, Pencil, Trash2 } from 'lucide-react';
 import type { Comment } from '@/types/comment';
 
 interface CommentItemProps {
@@ -10,6 +12,8 @@ interface CommentItemProps {
   onReply?: (commentId: string) => void;
   onLike?: (commentId: string) => void;
   onReport?: (commentId: string) => void;
+  onEdit?: (commentId: string) => void;
+  onDelete?: (commentId: string) => void;
 }
 
 /**
@@ -20,8 +24,12 @@ export default function CommentItem({
   comment, 
   onReply, 
   onLike, 
-  onReport 
+  onReport,
+  onEdit,
+  onDelete 
 }: CommentItemProps) {
+  const { user } = useUser();
+  const isAuthor = user?.id === comment.userId;
   
   /**
    * 이니셜 생성 함수 (한글/영문 모두 지원)
@@ -123,11 +131,15 @@ export default function CommentItem({
         {/* 아바타 */}
         <div className="shrink-0">
           <Avatar className="w-10 h-10">
-            <AvatarFallback 
-              className={`${getAvatarColor(comment.authorName)} text-sm font-semibold`}
-            >
-              {getInitials(comment.authorName)}
-            </AvatarFallback>
+            {comment.authorImageUrl ? (
+              <AvatarImage src={comment.authorImageUrl} alt={comment.authorName} />
+            ) : (
+              <AvatarFallback 
+                className={`${getAvatarColor(comment.authorName)} text-sm font-semibold`}
+              >
+                {getInitials(comment.authorName)}
+              </AvatarFallback>
+            )}
           </Avatar>
         </div>
 
@@ -140,9 +152,9 @@ export default function CommentItem({
             </span>
             
             {/* 배지들 */}
-            {comment.isAuthor && (
+            {isAuthor && (
               <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                작성자
+                내 댓글
               </span>
             )}
             {comment.isPinned && (
@@ -192,16 +204,63 @@ export default function CommentItem({
               <span className="text-xs">답글</span>
             </Button>
 
-            {/* 신고 버튼 */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto p-1 text-gray-500 hover:text-orange-500 hover:bg-orange-50 transition-colors opacity-0 group-hover:opacity-100"
-              onClick={() => onReport?.(comment.id)}
-            >
-              <Flag className="w-4 h-4 mr-1" />
-              <span className="text-xs">신고</span>
-            </Button>
+            {/* 작성자일 경우 편집/삭제 버튼 */}
+            {isAuthor ? (
+              <>
+                {/* 수정 버튼 */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-1 text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                  onClick={() => onEdit?.(comment.id)}
+                >
+                  <Pencil className="w-4 h-4 mr-1" />
+                  <span className="text-xs">수정</span>
+                </Button>
+
+                {/* 삭제 버튼 (다이얼로그) */}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto p-1 text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      <span className="text-xs">삭제</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>댓글 삭제</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>취소</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-red-500 hover:bg-red-600"
+                        onClick={() => onDelete?.(comment.id)}
+                      >
+                        삭제
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
+            ) : (
+              /* 다른 사용자의 댓글일 경우 신고 버튼 */
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto p-1 text-gray-500 hover:text-orange-500 hover:bg-orange-50 transition-colors opacity-0 group-hover:opacity-100"
+                onClick={() => onReport?.(comment.id)}
+              >
+                <Flag className="w-4 h-4 mr-1" />
+                <span className="text-xs">신고</span>
+              </Button>
+            )}
           </div>
 
           {/* 통계 정보 (관리자용) */}

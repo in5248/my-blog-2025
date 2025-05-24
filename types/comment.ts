@@ -67,7 +67,10 @@ export interface Comment {
   authorWebsite?: string;
   
   /** 작성자 아바타 URL (선택적) */
-  authorAvatar?: string;
+  authorImageUrl?: string;
+  
+  /** 작성자 Clerk User ID (선택적) */
+  userId?: string;
   
   /** 댓글 내용 (마크다운 지원) */
   content: string;
@@ -125,6 +128,12 @@ export interface CommentFormData {
   
   /** 작성자 웹사이트 (선택적) */
   authorWebsite?: string;
+  
+  /** 작성자 아바타 URL (선택적) */
+  authorImageUrl?: string;
+  
+  /** 작성자 Clerk User ID (선택적) */
+  userId?: string;
   
   /** 댓글 내용 (필수) */
   content: string;
