@@ -3,12 +3,14 @@
  * 다양한 마크다운 요소들을 테스트하기 위한 페이지
  */
 
-import MarkdownContent from '@/components/blog/markdown-content';
-import type { Metadata } from 'next';
+import MarkdownContent from "@/components/blog/markdown-content";
+import Link from "next/link";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Markdown Content Demo | My Blog',
-  description: 'MarkdownContent 컴포넌트의 다양한 기능을 테스트하는 데모 페이지입니다.',
+  title: "Markdown Content Demo | My Blog",
+  description:
+    "MarkdownContent 컴포넌트의 다양한 기능을 테스트하는 데모 페이지입니다.",
 };
 
 // 테스트용 마크다운 콘텐츠
@@ -184,20 +186,21 @@ export default function MarkdownDemoPage() {
         <header className="mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">MarkdownContent 데모</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            MarkdownContent 컴포넌트의 다양한 기능을 확인할 수 있는 데모 페이지입니다.
-            마크다운 문법, 코드 하이라이팅, 테이블 등 모든 기능을 테스트해보세요.
+            MarkdownContent 컴포넌트의 다양한 기능을 확인할 수 있는 데모
+            페이지입니다. 마크다운 문법, 코드 하이라이팅, 테이블 등 모든 기능을
+            테스트해보세요.
           </p>
         </header>
 
         {/* 컴포넌트 옵션 테스트 */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-6">컴포넌트 크기 변형</h2>
-          
+
           <div className="grid gap-8">
             {/* 기본 크기 */}
             <div className="border rounded-lg p-6">
               <h3 className="text-lg font-semibold mb-4">기본 크기 (base)</h3>
-              <MarkdownContent 
+              <MarkdownContent
                 content="**굵은 글씨**, *기울임*, `인라인 코드` 테스트"
                 size="base"
               />
@@ -206,7 +209,7 @@ export default function MarkdownDemoPage() {
             {/* 큰 크기 */}
             <div className="border rounded-lg p-6">
               <h3 className="text-lg font-semibold mb-4">큰 크기 (lg)</h3>
-              <MarkdownContent 
+              <MarkdownContent
                 content="**굵은 글씨**, *기울임*, `인라인 코드` 테스트"
                 size="lg"
               />
@@ -216,7 +219,7 @@ export default function MarkdownDemoPage() {
 
         {/* 메인 데모 콘텐츠 */}
         <main>
-          <MarkdownContent 
+          <MarkdownContent
             content={demoMarkdown}
             size="lg"
             enableTableOfContents={true}
@@ -227,21 +230,21 @@ export default function MarkdownDemoPage() {
         {/* 네비게이션 */}
         <footer className="mt-16 pt-8 border-t text-center">
           <div className="flex justify-center gap-4">
-            <a
+            <Link
               href="/posts"
               className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               📚 포스트 목록 보기
-            </a>
-            <a
+            </Link>
+            <Link
               href="/"
               className="inline-flex items-center justify-center rounded-lg border border-input bg-background px-6 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               🏠 홈으로 돌아가기
-            </a>
+            </Link>
           </div>
         </footer>
       </div>
     </div>
   );
-} 
+}

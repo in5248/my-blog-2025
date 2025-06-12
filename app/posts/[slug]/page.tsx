@@ -3,18 +3,19 @@
  * 동적 라우팅을 통해 개별 포스트의 상세 내용을 표시
  */
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { 
-  getPostBySlug, 
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import {
+  getPostBySlug,
   getRelativeTime,
-  mockPosts 
-} from '@/data/mockData';
-import MarkdownContent from '@/components/blog/markdown-content';
-import RelatedPosts from '@/components/blog/related-posts';
-import LikeButton from '@/components/blog/like-button';
-import type { Metadata } from 'next';
+  mockPosts,
+  type BlogPost,
+} from "@/data/mockData";
+import MarkdownContent from "@/components/blog/markdown-content";
+import RelatedPosts from "@/components/blog/related-posts";
+import LikeButton from "@/components/blog/like-button";
+import type { Metadata } from "next";
 
 // 페이지 props 타입 정의
 type PageProps = {
@@ -24,20 +25,22 @@ type PageProps = {
 // 정적 경로 생성 함수
 export async function generateStaticParams() {
   return mockPosts
-    .filter(post => post.status === 'published')
+    .filter((post) => post.status === "published")
     .map((post) => ({
       slug: post.slug,
     }));
 }
 
 // 동적 메타데이터 생성 함수
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  
+
   if (!post) {
     return {
-      title: '포스트를 찾을 수 없습니다 | My Blog',
+      title: "포스트를 찾을 수 없습니다 | My Blog",
     };
   }
 
@@ -49,22 +52,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      type: 'article',
+      type: "article",
       publishedTime: post.publishedAt.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
       authors: [post.author.name],
       tags: post.tags,
-      images: post.coverImage ? [
-        {
-          url: post.coverImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        }
-      ] : [],
+      images: post.coverImage
+        ? [
+            {
+              url: post.coverImage,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+          ]
+        : [],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
       images: post.coverImage ? [post.coverImage] : [],
@@ -73,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // 포스트 헤더 컴포넌트
-function PostHeader({ post }: { post: any }) {
+function PostHeader({ post }: { post: BlogPost }) {
   return (
     <header className="mb-12">
       {/* 뒤로 가기 링크 */}
@@ -128,7 +133,8 @@ function PostHeader({ post }: { post: any }) {
           </div>
           {post.updatedAt > post.publishedAt && (
             <p className="text-xs mt-1">
-              마지막 수정: {new Date(post.updatedAt).toLocaleDateString('ko-KR')}
+              마지막 수정:{" "}
+              {new Date(post.updatedAt).toLocaleDateString("ko-KR")}
             </p>
           )}
         </div>
@@ -154,11 +160,11 @@ function PostHeader({ post }: { post: any }) {
           href={`/categories/${post.category.slug}`}
           className="inline-flex items-center"
         >
-          <span 
+          <span
             className="px-3 py-1 rounded-full text-sm font-medium hover:opacity-80 transition-opacity"
-            style={{ 
-              backgroundColor: post.category.color + '15',
-              color: post.category.color 
+            style={{
+              backgroundColor: post.category.color + "15",
+              color: post.category.color,
             }}
           >
             📁 {post.category.name}
@@ -195,7 +201,7 @@ function PostHeader({ post }: { post: any }) {
 }
 
 // 포스트 콘텐츠 컴포넌트
-function PostContent({ post }: { post: any }) {
+function PostContent({ post }: { post: BlogPost }) {
   return (
     <article className="mb-16">
       {/* 커버 이미지 */}
@@ -213,7 +219,7 @@ function PostContent({ post }: { post: any }) {
       )}
 
       {/* 마크다운 콘텐츠 */}
-      <MarkdownContent 
+      <MarkdownContent
         content={post.content}
         size="lg"
         enableTableOfContents={true}
@@ -225,7 +231,9 @@ function PostContent({ post }: { post: any }) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           {/* 좋아요 섹션 */}
           <div className="flex items-center gap-4">
-            <span className="text-lg font-semibold">이 글이 도움이 되셨나요?</span>
+            <span className="text-lg font-semibold">
+              이 글이 도움이 되셨나요?
+            </span>
             <LikeButton
               postId={post.slug}
               initialLikes={post.likeCount}
@@ -236,7 +244,9 @@ function PostContent({ post }: { post: any }) {
 
           {/* 소셜 공유 버튼 */}
           <div>
-            <h3 className="text-lg font-semibold mb-3 sm:text-right">공유하기</h3>
+            <h3 className="text-lg font-semibold mb-3 sm:text-right">
+              공유하기
+            </h3>
             <div className="flex gap-3">
               <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
                 Twitter
@@ -258,10 +268,10 @@ function PostContent({ post }: { post: any }) {
 // 메인 페이지 컴포넌트
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  
+
   // 포스트 데이터 가져오기
   const post = getPostBySlug(slug);
-  
+
   // 포스트가 존재하지 않으면 404 반환
   if (!post) {
     notFound();
@@ -282,7 +292,10 @@ export default async function PostDetailPage({ params }: PageProps) {
         {/* 다음 구현할 섹션들 */}
         <div className="mt-16 pt-8 border-t">
           <div className="text-center text-muted-foreground">
-            <p className="mb-4">💬 댓글 시스템은 곧 추가될 예정입니다. 👍 좋아요 기능은 이미 활성화되어 있어요!</p>
+            <p className="mb-4">
+              💬 댓글 시스템은 곧 추가될 예정입니다. 👍 좋아요 기능은 이미
+              활성화되어 있어요!
+            </p>
             <div className="flex justify-center gap-4">
               <Link
                 href="/posts"
@@ -302,4 +315,4 @@ export default async function PostDetailPage({ params }: PageProps) {
       </div>
     </div>
   );
-} 
+}

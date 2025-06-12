@@ -3,18 +3,36 @@
  * 클라이언트 사이드 검색, 필터링, 정렬 기능 제공
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, Filter, SortAsc, Clock, TrendingUp, Calendar, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { PostCard } from '@/components/blog/post-card';
-import { searchPosts, mockPosts, categories, getPopularTags, type BlogPost } from '@/data/mockData';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Search,
+  Filter,
+  SortAsc,
+  TrendingUp,
+  Calendar,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { PostCard } from "@/components/blog/post-card";
+import {
+  searchPosts,
+  categories,
+  getPopularTags,
+  type BlogPost,
+} from "@/data/mockData";
 
 /**
  * SearchResults 컴포넌트의 Props 인터페이스
@@ -33,20 +51,29 @@ interface SearchResultsProps {
 /**
  * 정렬 옵션 타입
  */
-type SortOption = 'relevance' | 'newest' | 'oldest' | 'popular';
+type SortOption = "relevance" | "newest" | "oldest" | "popular";
 
 /**
  * 검색어 하이라이팅 함수
  */
-function highlightSearchTerm(text: string, searchTerm: string): React.ReactNode {
+function highlightSearchTerm(
+  text: string,
+  searchTerm: string
+): React.ReactNode {
   if (!searchTerm.trim()) return text;
-  
-  const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+  const regex = new RegExp(
+    `(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi"
+  );
   const parts = text.split(regex);
-  
-  return parts.map((part, index) => 
+
+  return parts.map((part, index) =>
     regex.test(part) ? (
-      <mark key={index} className="bg-primary/20 text-primary font-medium rounded px-1">
+      <mark
+        key={index}
+        className="bg-primary/20 text-primary font-medium rounded px-1"
+      >
         {part}
       </mark>
     ) : (
@@ -60,13 +87,17 @@ function highlightSearchTerm(text: string, searchTerm: string): React.ReactNode 
  */
 function sortPosts(posts: BlogPost[], sortBy: SortOption): BlogPost[] {
   switch (sortBy) {
-    case 'newest':
-      return [...posts].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
-    case 'oldest':
-      return [...posts].sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
-    case 'popular':
+    case "newest":
+      return [...posts].sort(
+        (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()
+      );
+    case "oldest":
+      return [...posts].sort(
+        (a, b) => a.publishedAt.getTime() - b.publishedAt.getTime()
+      );
+    case "popular":
       return [...posts].sort((a, b) => b.viewCount - a.viewCount);
-    case 'relevance':
+    case "relevance":
     default:
       return posts; // 검색 함수에서 이미 관련도순으로 정렬됨
   }
@@ -78,19 +109,20 @@ function sortPosts(posts: BlogPost[], sortBy: SortOption): BlogPost[] {
 function EmptySearchState() {
   const router = useRouter();
   const popularTags = getPopularTags(8);
-  
+
   return (
     <div className="text-center py-12">
       <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
         <Search className="w-8 h-8 text-muted-foreground" />
       </div>
-      
+
       <h3 className="text-xl font-semibold mb-2">검색어를 입력해주세요</h3>
       <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-        제목, 내용, 태그에서 키워드를 검색할 수 있습니다.<br />
+        제목, 내용, 태그에서 키워드를 검색할 수 있습니다.
+        <br />
         아래 인기 태그를 클릭해서 검색해보세요.
       </p>
-      
+
       {/* 인기 태그 */}
       <div className="mb-8">
         <h4 className="text-sm font-medium mb-4 flex items-center justify-center gap-2">
@@ -101,7 +133,9 @@ function EmptySearchState() {
           {popularTags.map((tag) => (
             <button
               key={tag}
-              onClick={() => router.push(`/search?q=${encodeURIComponent(tag)}`)}
+              onClick={() =>
+                router.push(`/search?q=${encodeURIComponent(tag)}`)
+              }
               className="px-3 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-sm transition-colors"
             >
               #{tag}
@@ -109,11 +143,11 @@ function EmptySearchState() {
           ))}
         </div>
       </div>
-      
+
       {/* 최근 포스트 */}
       <div>
         <Button
-          onClick={() => router.push('/posts')}
+          onClick={() => router.push("/posts")}
           className="inline-flex items-center gap-2"
         >
           <Calendar className="w-4 h-4" />
@@ -127,30 +161,45 @@ function EmptySearchState() {
 /**
  * 검색 결과 없음 상태 컴포넌트
  */
-function NoResultsState({ query, onSuggestedSearch }: { 
-  query: string; 
+function NoResultsState({
+  query,
+  onSuggestedSearch,
+}: {
+  query: string;
   onSuggestedSearch: (suggestion: string) => void;
 }) {
   // 간단한 검색어 제안 (오타 교정)
   const suggestions = useMemo(() => {
-    const commonTerms = ['React', 'Next.js', 'TypeScript', 'JavaScript', 'CSS', 'Node.js'];
-    return commonTerms.filter(term => 
-      term.toLowerCase().includes(query.toLowerCase()) || 
-      query.toLowerCase().includes(term.toLowerCase())
-    ).slice(0, 3);
+    const commonTerms = [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "JavaScript",
+      "CSS",
+      "Node.js",
+    ];
+    return commonTerms
+      .filter(
+        (term) =>
+          term.toLowerCase().includes(query.toLowerCase()) ||
+          query.toLowerCase().includes(term.toLowerCase())
+      )
+      .slice(0, 3);
   }, [query]);
-  
+
   return (
     <div className="text-center py-12">
       <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
         <Search className="w-8 h-8 text-muted-foreground" />
       </div>
-      
+
       <h3 className="text-xl font-semibold mb-2">검색 결과가 없습니다</h3>
       <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-        "<mark className="bg-primary/20 text-primary px-1 rounded">{query}</mark>"에 대한 검색 결과를 찾을 수 없습니다.
+        "
+        <mark className="bg-primary/20 text-primary px-1 rounded">{query}</mark>
+        "에 대한 검색 결과를 찾을 수 없습니다.
       </p>
-      
+
       {/* 검색어 제안 */}
       {suggestions.length > 0 && (
         <div className="mb-6">
@@ -168,9 +217,11 @@ function NoResultsState({ query, onSuggestedSearch }: {
           </div>
         </div>
       )}
-      
+
       <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">다른 방법으로 시도해보세요:</p>
+        <p className="text-sm text-muted-foreground">
+          다른 방법으로 시도해보세요:
+        </p>
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• 검색어의 철자를 확인해주세요</li>
           <li>• 더 간단한 검색어를 사용해보세요</li>
@@ -192,82 +243,98 @@ export default function SearchResults({
 }: SearchResultsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // 상태 관리
   const [query, setQuery] = useState(initialQuery);
   const [inputValue, setInputValue] = useState(initialQuery);
   const [results, setResults] = useState<BlogPost[]>(initialResults);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [sortBy, setSortBy] = useState<SortOption>(initialSortBy as SortOption || 'relevance');
+  const [sortBy, setSortBy] = useState<SortOption>(
+    (initialSortBy as SortOption) || "relevance"
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [searchTime, setSearchTime] = useState<number | null>(null);
 
   // URL 업데이트 함수
-  const updateURL = useCallback((newQuery: string, newCategory?: string, newSort?: string) => {
-    const params = new URLSearchParams();
-    if (newQuery) params.set('q', newQuery);
-    if (newCategory) params.set('category', newCategory);
-    if (newSort && newSort !== 'relevance') params.set('sort', newSort);
-    
-    const url = params.toString() ? `/search?${params.toString()}` : '/search';
-    router.push(url);
-  }, [router]);
+  const updateURL = useCallback(
+    (newQuery: string, newCategory?: string, newSort?: string) => {
+      const params = new URLSearchParams();
+      if (newQuery) params.set("q", newQuery);
+      if (newCategory) params.set("category", newCategory);
+      if (newSort && newSort !== "relevance") params.set("sort", newSort);
+
+      const url = params.toString()
+        ? `/search?${params.toString()}`
+        : "/search";
+      router.push(url);
+    },
+    [router]
+  );
 
   // 검색 실행
-  const performSearch = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      setSearchTime(null);
-      return;
-    }
-
-    setIsLoading(true);
-    const startTime = performance.now();
-    
-    try {
-      // 실제 환경에서는 API 호출
-      await new Promise(resolve => setTimeout(resolve, 100)); // 로딩 시뮬레이션
-      
-      let searchResults = searchPosts(searchQuery);
-      
-      // 카테고리 필터 적용
-      if (selectedCategory) {
-        searchResults = searchResults.filter(post => 
-          post.category.slug === selectedCategory
-        );
+  const performSearch = useCallback(
+    async (searchQuery: string) => {
+      if (!searchQuery.trim()) {
+        setResults([]);
+        setSearchTime(null);
+        return;
       }
-      
-      // 정렬 적용
-      searchResults = sortPosts(searchResults, sortBy);
-      
-      const endTime = performance.now();
-      setResults(searchResults);
-      setSearchTime(endTime - startTime);
-    } catch (error) {
-      console.error('Search error:', error);
-      setResults([]);
-      setSearchTime(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedCategory, sortBy]);
+
+      setIsLoading(true);
+      const startTime = performance.now();
+
+      try {
+        // 실제 환경에서는 API 호출
+        await new Promise((resolve) => setTimeout(resolve, 100)); // 로딩 시뮬레이션
+
+        let searchResults = searchPosts(searchQuery);
+
+        // 카테고리 필터 적용
+        if (selectedCategory) {
+          searchResults = searchResults.filter(
+            (post) => post.category.slug === selectedCategory
+          );
+        }
+
+        // 정렬 적용
+        searchResults = sortPosts(searchResults, sortBy);
+
+        const endTime = performance.now();
+        setResults(searchResults);
+        setSearchTime(endTime - startTime);
+      } catch (error) {
+        console.error("Search error:", error);
+        setResults([]);
+        setSearchTime(null);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedCategory, sortBy]
+  );
 
   // 검색 폼 제출
-  const handleSearch = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmedQuery = inputValue.trim();
-    setQuery(trimmedQuery);
-    updateURL(trimmedQuery, selectedCategory, sortBy);
-    performSearch(trimmedQuery);
-  }, [inputValue, selectedCategory, sortBy, updateURL, performSearch]);
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const trimmedQuery = inputValue.trim();
+      setQuery(trimmedQuery);
+      updateURL(trimmedQuery, selectedCategory, sortBy);
+      performSearch(trimmedQuery);
+    },
+    [inputValue, selectedCategory, sortBy, updateURL, performSearch]
+  );
 
   // 제안된 검색어로 검색
-  const handleSuggestedSearch = useCallback((suggestion: string) => {
-    setInputValue(suggestion);
-    setQuery(suggestion);
-    updateURL(suggestion, selectedCategory, sortBy);
-    performSearch(suggestion);
-  }, [selectedCategory, sortBy, updateURL, performSearch]);
+  const handleSuggestedSearch = useCallback(
+    (suggestion: string) => {
+      setInputValue(suggestion);
+      setQuery(suggestion);
+      updateURL(suggestion, selectedCategory, sortBy);
+      performSearch(suggestion);
+    },
+    [selectedCategory, sortBy, updateURL, performSearch]
+  );
 
   // 필터/정렬 변경시 재검색
   useEffect(() => {
@@ -279,15 +346,15 @@ export default function SearchResults({
 
   // URL 파라미터 변경 감지
   useEffect(() => {
-    const urlQuery = searchParams.get('q') || '';
-    const urlCategory = searchParams.get('category') || '';
-    const urlSort = searchParams.get('sort') || 'relevance';
-    
+    const urlQuery = searchParams.get("q") || "";
+    const urlCategory = searchParams.get("category") || "";
+    const urlSort = searchParams.get("sort") || "relevance";
+
     setInputValue(urlQuery);
     setQuery(urlQuery);
     setSelectedCategory(urlCategory);
     setSortBy(urlSort as SortOption);
-    
+
     if (urlQuery) {
       performSearch(urlQuery);
     }
@@ -310,7 +377,7 @@ export default function SearchResults({
               />
             </div>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? '검색 중...' : '검색'}
+              {isLoading ? "검색 중..." : "검색"}
             </Button>
           </form>
         </CardContent>
@@ -323,7 +390,10 @@ export default function SearchResults({
             {/* 카테고리 필터 */}
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-muted-foreground" />
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="카테고리" />
                 </SelectTrigger>
@@ -341,7 +411,10 @@ export default function SearchResults({
             {/* 정렬 옵션 */}
             <div className="flex items-center gap-2">
               <SortAsc className="w-4 h-4 text-muted-foreground" />
-              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value) => setSortBy(value as SortOption)}
+              >
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -365,28 +438,32 @@ export default function SearchResults({
       )}
 
       {/* 활성 필터 표시 */}
-      {(selectedCategory || sortBy !== 'relevance') && (
+      {(selectedCategory || sortBy !== "relevance") && (
         <div className="flex flex-wrap gap-2">
           {selectedCategory && (
             <Badge variant="secondary" className="gap-1">
-              카테고리: {categories.find(c => c.slug === selectedCategory)?.name}
+              카테고리:{" "}
+              {categories.find((c) => c.slug === selectedCategory)?.name}
               <button
-                onClick={() => setSelectedCategory('')}
+                onClick={() => setSelectedCategory("")}
                 className="ml-1 hover:text-destructive"
               >
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
-          {sortBy !== 'relevance' && (
+          {sortBy !== "relevance" && (
             <Badge variant="secondary" className="gap-1">
-              정렬: {
-                sortBy === 'newest' ? '최신순' :
-                sortBy === 'oldest' ? '오래된순' :
-                sortBy === 'popular' ? '인기순' : '관련도순'
-              }
+              정렬:{" "}
+              {sortBy === "newest"
+                ? "최신순"
+                : sortBy === "oldest"
+                ? "오래된순"
+                : sortBy === "popular"
+                ? "인기순"
+                : "관련도순"}
               <button
-                onClick={() => setSortBy('relevance')}
+                onClick={() => setSortBy("relevance")}
                 className="ml-1 hover:text-destructive"
               >
                 <X className="w-3 h-3" />
@@ -405,7 +482,10 @@ export default function SearchResults({
           <p className="text-muted-foreground">검색 중...</p>
         </div>
       ) : results.length === 0 ? (
-        <NoResultsState query={query} onSuggestedSearch={handleSuggestedSearch} />
+        <NoResultsState
+          query={query}
+          onSuggestedSearch={handleSuggestedSearch}
+        />
       ) : (
         <div>
           {/* 검색 결과 헤더 */}
@@ -421,9 +501,9 @@ export default function SearchResults({
           {/* 포스트 그리드 */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {results.map((post) => (
-              <PostCard 
-                key={post.id} 
-                post={post} 
+              <PostCard
+                key={post.id}
+                post={post}
                 searchQuery={query} // 하이라이팅을 위한 검색어 전달
               />
             ))}
@@ -432,4 +512,4 @@ export default function SearchResults({
       )}
     </div>
   );
-} 
+}

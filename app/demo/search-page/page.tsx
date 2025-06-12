@@ -3,24 +3,36 @@
  * 검색 페이지의 다양한 기능들을 테스트할 수 있는 데모 페이지
  */
 
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, Filter, SortAsc, ArrowLeft, ExternalLink, BookOpen } from 'lucide-react';
-import { categories, getPopularTags } from '@/data/mockData';
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Search,
+  Filter,
+  SortAsc,
+  ArrowLeft,
+  ExternalLink,
+  BookOpen,
+} from "lucide-react";
+import { categories, getPopularTags } from "@/data/mockData";
 
 export default function SearchPageDemo() {
   const popularTags = getPopularTags(10);
   const sampleSearchTerms = [
-    'React',
-    'Next.js',
-    'TypeScript',
-    '성능 최적화',
-    'CSS Grid',
-    'JavaScript ES2024',
-    'API 설계',
-    '데이터베이스'
+    "React",
+    "Next.js",
+    "TypeScript",
+    "성능 최적화",
+    "CSS Grid",
+    "JavaScript ES2024",
+    "API 설계",
+    "데이터베이스",
   ];
 
   return (
@@ -28,9 +40,7 @@ export default function SearchPageDemo() {
       <div className="max-w-4xl mx-auto">
         {/* 헤더 */}
         <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">
-            🔍 검색 결과 페이지 데모
-          </h1>
+          <h1 className="text-4xl font-bold mb-4">🔍 검색 결과 페이지 데모</h1>
           <p className="text-xl text-muted-foreground mb-6">
             URL 기반 검색과 고급 필터링 기능을 체험해보세요
           </p>
@@ -166,9 +176,7 @@ export default function SearchPageDemo() {
               <Filter className="w-5 h-5" />
               카테고리별 검색
             </CardTitle>
-            <CardDescription>
-              특정 카테고리에서 검색해보세요
-            </CardDescription>
+            <CardDescription>특정 카테고리에서 검색해보세요</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -213,10 +221,26 @@ export default function SearchPageDemo() {
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { sort: 'relevance', label: '관련도순', description: '검색어와의 관련성' },
-                { sort: 'newest', label: '최신순', description: '최근 게시된 순서' },
-                { sort: 'oldest', label: '오래된순', description: '오래된 게시 순서' },
-                { sort: 'popular', label: '인기순', description: '조회수 기준' }
+                {
+                  sort: "relevance",
+                  label: "관련도순",
+                  description: "검색어와의 관련성",
+                },
+                {
+                  sort: "newest",
+                  label: "최신순",
+                  description: "최근 게시된 순서",
+                },
+                {
+                  sort: "oldest",
+                  label: "오래된순",
+                  description: "오래된 게시 순서",
+                },
+                {
+                  sort: "popular",
+                  label: "인기순",
+                  description: "조회수 기준",
+                },
               ].map((option) => (
                 <Button
                   key={option.sort}
@@ -248,31 +272,37 @@ export default function SearchPageDemo() {
             <div className="space-y-4">
               {[
                 {
-                  title: 'Frontend 기술 최신순',
-                  description: 'Frontend 카테고리에서 "React" 검색, 최신순 정렬',
-                  url: '/search?q=React&category=frontend&sort=newest'
+                  title: "Frontend 기술 최신순",
+                  description:
+                    'Frontend 카테고리에서 "React" 검색, 최신순 정렬',
+                  url: "/search?q=React&category=frontend&sort=newest",
                 },
                 {
-                  title: 'Backend 인기 포스트',
+                  title: "Backend 인기 포스트",
                   description: 'Backend 카테고리에서 "API" 검색, 인기순 정렬',
-                  url: '/search?q=API&category=backend&sort=popular'
+                  url: "/search?q=API&category=backend&sort=popular",
                 },
                 {
-                  title: '성능 최적화 가이드',
-                  description: '성능 최적화 관련 포스트 검색',
-                  url: '/search?q=성능 최적화'
+                  title: "성능 최적화 가이드",
+                  description: "성능 최적화 관련 포스트 검색",
+                  url: "/search?q=성능 최적화",
                 },
                 {
-                  title: 'TypeScript 기초부터',
-                  description: 'TypeScript 관련 포스트, 오래된순으로 정렬',
-                  url: '/search?q=TypeScript&sort=oldest'
-                }
+                  title: "TypeScript 기초부터",
+                  description: "TypeScript 관련 포스트, 오래된순으로 정렬",
+                  url: "/search?q=TypeScript&sort=oldest",
+                },
               ].map((example, index) => (
-                <div key={index} className="border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 hover:bg-accent/50 transition-colors"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex-grow">
                       <h4 className="font-medium mb-1">{example.title}</h4>
-                      <p className="text-sm text-muted-foreground">{example.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {example.description}
+                      </p>
                     </div>
                     <Button size="sm" asChild>
                       <Link href={example.url}>
@@ -302,15 +332,21 @@ export default function SearchPageDemo() {
                 <div className="text-sm text-muted-foreground">총 포스트</div>
               </div>
               <div className="text-center p-4 bg-green-500/5 rounded-lg">
-                <div className="text-2xl font-bold text-green-600 mb-1">{categories.length}</div>
+                <div className="text-2xl font-bold text-green-600 mb-1">
+                  {categories.length}
+                </div>
                 <div className="text-sm text-muted-foreground">카테고리</div>
               </div>
               <div className="text-center p-4 bg-blue-500/5 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600 mb-1">{popularTags.length}+</div>
+                <div className="text-2xl font-bold text-blue-600 mb-1">
+                  {popularTags.length}+
+                </div>
                 <div className="text-sm text-muted-foreground">태그</div>
               </div>
               <div className="text-center p-4 bg-purple-500/5 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600 mb-1">100%</div>
+                <div className="text-2xl font-bold text-purple-600 mb-1">
+                  100%
+                </div>
                 <div className="text-sm text-muted-foreground">검색 가능</div>
               </div>
             </div>
@@ -340,4 +376,4 @@ export default function SearchPageDemo() {
       </div>
     </div>
   );
-} 
+}
