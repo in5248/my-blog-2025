@@ -161,7 +161,11 @@ interface NoResultsProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-const NoResults = ({ query, suggestions, onSuggestionClick }: NoResultsProps) => (
+const NoResults = ({
+  query,
+  suggestions,
+  onSuggestionClick,
+}: NoResultsProps) => (
   <div className="text-center py-12">
     <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
       <Search className="w-8 h-8 text-muted-foreground" />
