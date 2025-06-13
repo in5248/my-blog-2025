@@ -11,8 +11,8 @@ import {
   Search,
   Filter,
   SortAsc,
-  TrendingUp,
   Calendar,
+  TrendingUp,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PostCard } from "@/components/blog/post-card";
+import { BlogPost } from "@/types";
 import {
   searchPosts,
   categories,
@@ -161,32 +162,17 @@ function EmptySearchState() {
 /**
  * 검색 결과 없음 상태 컴포넌트
  */
-function NoResultsState({
-  query,
-  onSuggestedSearch,
-}: {
+interface NoResultsProps {
   query: string;
-  onSuggestedSearch: (suggestion: string) => void;
-}) {
-  // 간단한 검색어 제안 (오타 교정)
-  const suggestions = useMemo(() => {
-    const commonTerms = [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "JavaScript",
-      "CSS",
-      "Node.js",
-    ];
-    return commonTerms
-      .filter(
-        (term) =>
-          term.toLowerCase().includes(query.toLowerCase()) ||
-          query.toLowerCase().includes(term.toLowerCase())
-      )
-      .slice(0, 3);
-  }, [query]);
+  suggestions: string[];
+  onSuggestionClick: (suggestion: string) => void;
+}
 
+const NoResults: React.FC<NoResultsProps> = ({
+  query,
+  suggestions,
+  onSuggestionClick,
+}) => {
   return (
     <div className="text-center py-12">
       <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
@@ -195,42 +181,31 @@ function NoResultsState({
 
       <h3 className="text-xl font-semibold mb-2">검색 결과가 없습니다</h3>
       <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-        "
+        &quot;
         <mark className="bg-primary/20 text-primary px-1 rounded">{query}</mark>
-        "에 대한 검색 결과를 찾을 수 없습니다.
+        &quot;에 대한 검색 결과를 찾을 수 없습니다.
       </p>
 
-      {/* 검색어 제안 */}
-      {suggestions.length > 0 && (
+      {suggestions?.length > 0 && (
         <div className="mb-6">
           <h4 className="text-sm font-medium mb-3">이런 검색어는 어떠세요?</h4>
           <div className="flex flex-wrap justify-center gap-2">
-            {suggestions.map((suggestion) => (
-              <button
+            {suggestions.map((suggestion: string) => (
+              <Button
                 key={suggestion}
-                onClick={() => onSuggestedSearch(suggestion)}
-                className="px-3 py-1 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-full text-sm transition-colors"
+                variant="outline"
+                size="sm"
+                onClick={() => onSuggestionClick(suggestion)}
               >
                 {suggestion}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
       )}
-
-      <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">
-          다른 방법으로 시도해보세요:
-        </p>
-        <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• 검색어의 철자를 확인해주세요</li>
-          <li>• 더 간단한 검색어를 사용해보세요</li>
-          <li>• 다른 키워드로 검색해보세요</li>
-        </ul>
-      </div>
     </div>
   );
-}
+};
 
 /**
  * 메인 SearchResults 컴포넌트
@@ -482,9 +457,9 @@ export default function SearchResults({
           <p className="text-muted-foreground">검색 중...</p>
         </div>
       ) : results.length === 0 ? (
-        <NoResultsState
+        <NoResults
           query={query}
-          onSuggestedSearch={handleSuggestedSearch}
+          onSuggestionClick={handleSuggestedSearch}
         />
       ) : (
         <div>

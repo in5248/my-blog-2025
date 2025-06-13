@@ -1,20 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: "export",
+  distDir: ".next",
   images: {
     unoptimized: true,
-    domains: ["images.unsplash.com"],
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   },
   eslint: {
-    ignoreDuringBuilds: true,
-    dirs: ['pages', 'components', 'lib', 'layouts', 'scripts']
-  },
-  experimental: {
-    typedRoutes: true,
-    serverActions: true
+    ignoreDuringBuilds: true
   }
 };
 
