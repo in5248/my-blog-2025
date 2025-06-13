@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Filter, SortAsc, Calendar, TrendingUp, X } from "lucide-react";
+import { Search, Filter, SortAsc, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { PostCard } from "@/components/blog/post-card";
 import { BlogPost } from "@/types";
 import {
@@ -161,44 +161,38 @@ interface NoResultsProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-const NoResults: React.FC<NoResultsProps> = ({
-  query,
-  suggestions,
-  onSuggestionClick,
-}) => {
-  return (
-    <div className="text-center py-12">
-      <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
-        <Search className="w-8 h-8 text-muted-foreground" />
-      </div>
-
-      <h3 className="text-xl font-semibold mb-2">검색 결과가 없습니다</h3>
-      <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-        &quot;
-        <mark className="bg-primary/20 text-primary px-1 rounded">{query}</mark>
-        &quot;에 대한 검색 결과를 찾을 수 없습니다.
-      </p>
-
-      {suggestions?.length > 0 && (
-        <div className="mb-6">
-          <h4 className="text-sm font-medium mb-3">이런 검색어는 어떠세요?</h4>
-          <div className="flex flex-wrap justify-center gap-2">
-            {suggestions.map((suggestion: string) => (
-              <Button
-                key={suggestion}
-                variant="outline"
-                size="sm"
-                onClick={() => onSuggestionClick(suggestion)}
-              >
-                {suggestion}
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
+const NoResults = ({ query, suggestions, onSuggestionClick }: NoResultsProps) => (
+  <div className="text-center py-12">
+    <div className="w-16 h-16 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+      <Search className="w-8 h-8 text-muted-foreground" />
     </div>
-  );
-};
+
+    <h3 className="text-xl font-semibold mb-2">검색 결과가 없습니다</h3>
+    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+      &ldquo;
+      <mark className="bg-primary/20 text-primary px-1 rounded">{query}</mark>
+      &rdquo;에 대한 검색 결과를 찾을 수 없습니다.
+    </p>
+
+    {suggestions?.length > 0 && (
+      <div className="mb-6">
+        <h4 className="text-sm font-medium mb-3">이런 검색어는 어떠세요?</h4>
+        <div className="flex flex-wrap justify-center gap-2">
+          {suggestions.map((suggestion: string) => (
+            <Button
+              key={suggestion}
+              variant="outline"
+              size="sm"
+              onClick={() => onSuggestionClick(suggestion)}
+            >
+              {suggestion}
+            </Button>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+);
 
 /**
  * 메인 SearchResults 컴포넌트
