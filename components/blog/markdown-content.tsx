@@ -15,20 +15,20 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { Components } from "react-markdown";
+import type { CodeComponent } from "react-markdown/lib/ast-to-react";
 
 // 코드 하이라이팅 CSS 스타일 임포트
 import "highlight.js/styles/github-dark.css";
 
 // 상수
 const OPTIMIZE_IMAGES = true;
-const SECURE_LINKS = true;
 
 // 커스텀 링크 컴포넌트
 const CustomLink = ({
   href,
   children,
-}: {
-  href?: string;
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: React.ReactNode;
 }) => {
   if (!href) return <>{children}</>;
@@ -37,6 +37,7 @@ const CustomLink = ({
   if (href.startsWith("http")) {
     return (
       <a
+        {...props}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -101,7 +102,7 @@ export const MarkdownContent = memo(({ content }: MarkdownContentProps) => {
     ),
 
     // 링크
-    a: (linkProps) => <CustomLink {...linkProps} />, // eslint-disable-line react/jsx-props-no-spreading
+    a: ({ children, ...linkProps }) => <CustomLink {...linkProps}>{children}</CustomLink>,
 
     // 이미지
     img: (imageProps: React.ImgHTMLAttributes<HTMLImageElement>) => {
@@ -136,7 +137,7 @@ export const MarkdownContent = memo(({ content }: MarkdownContentProps) => {
     li: ({ children }) => <li className="text-foreground">{children}</li>,
 
     // 코드 블록
-    code: ({ node, inline, className, children, ...props }) => {
+    code: ({ inline, className, children, ...props }: Parameters<CodeComponent>[0]) => {
       const match = /language-(\w+)/.exec(className || "");
       const language = match ? match[1] : "";
 
