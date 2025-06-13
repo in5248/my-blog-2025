@@ -7,14 +7,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Search,
-  Filter,
-  SortAsc,
-  Calendar,
-  TrendingUp,
-  X,
-} from "lucide-react";
+import { Search, Filter, SortAsc, Calendar, TrendingUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -457,10 +450,7 @@ export default function SearchResults({
           <p className="text-muted-foreground">검색 중...</p>
         </div>
       ) : results.length === 0 ? (
-        <NoResults
-          query={query}
-          onSuggestionClick={handleSuggestedSearch}
-        />
+        <NoResults query={query} onSuggestionClick={handleSuggestedSearch} />
       ) : (
         <div>
           {/* 검색 결과 헤더 */}
