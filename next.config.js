@@ -1,14 +1,27 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
-    unoptimized: true
+    domains: ["images.unsplash.com"],
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/sign-in',
+        destination: '/auth/sign-in',
+        permanent: true,
+      },
+      {
+        source: '/sign-up',
+        destination: '/auth/sign-up',
+        permanent: true,
+      },
+    ]
   }
 };
 
