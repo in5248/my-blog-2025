@@ -3,16 +3,18 @@ const nextConfig = {
   output: "standalone",
   images: {
     unoptimized: true,
-    domains: ["images.unsplash.com"]
+    domains: ["images.unsplash.com"],
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: true,
+    dirs: ['pages', 'components', 'lib', 'layouts', 'scripts']
   },
-  env: {
-    NEXT_PUBLIC_APP_URL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"
+  experimental: {
+    typedRoutes: true,
+    serverActions: true
   }
 };
 
