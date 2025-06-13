@@ -19,152 +19,75 @@ import type { Components } from "react-markdown";
 // 코드 하이라이팅 CSS 스타일 임포트
 import "highlight.js/styles/github-dark.css";
 
-/**
- * MarkdownContent 컴포넌트의 Props 인터페이스
- */
-interface MarkdownContentProps {
-  /** 렌더링할 마크다운 콘텐츠 */
-  content: string;
-  /** 컨테이너 클래스명 */
-  className?: string;
-  /** 이미지 최적화 옵션 */
-  optimizeImages?: boolean;
-  /** 외부 링크에 보안 속성 추가 */
-  secureLlinks?: boolean;
-  /** 목차 생성을 위한 ID 추가 */
-  enableTableOfContents?: boolean;
-  /** 텍스트 크기 변형 */
-  size?: "sm" | "base" | "lg" | "xl";
-}
+// 상수
+const OPTIMIZE_IMAGES = true;
+const SECURE_LINKS = true;
 
-/**
- * 커스텀 링크 컴포넌트
- * 내부 링크는 Next.js Link, 외부 링크는 보안 속성 추가
- */
-interface CustomLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  href?: string;
-  children?: React.ReactNode;
-}
-
-function CustomLink({ href, children, ...props }: CustomLinkProps) {
-  // 내부 링크 판별
-  const isInternalLink = href && (href.startsWith("/") || href.startsWith("#"));
-
-  if (isInternalLink) {
-    return (
-      <Link
-        href={href}
-        className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-        {...props}
-      >
-        {children}
-      </Link>
-    );
-  }
-
-  // 외부 링크
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors inline-flex items-center gap-1"
-      {...props}
-    >
-      {children}
-      <span className="text-xs opacity-70">↗</span>
-    </a>
-  );
-}
-
-
-/**
- * 커스텀 코드 블록 컴포넌트
- * 언어별 구문 강조 및 복사 기능
- */
-interface CustomCodeProps extends React.ClassAttributes<HTMLElement>,
-  React.HTMLAttributes<HTMLElement> {
-  inline?: boolean;
-}
-
-function CustomCode({
-  inline,
-  className,
+// 커스텀 링크 컴포넌트
+const CustomLink = ({
+  href,
   children,
-  ...props
-}: CustomCodeProps) {
-  const match = /language-(\w+)/.exec(className || "");
-  const language = match ? match[1] : "";
+}: {
+  href?: string;
+  children: React.ReactNode;
+}) => {
+  if (!href) return <>{children}</>;
 
-  if (inline) {
+  // 외부 링크인 경우
+  if (href.startsWith("http")) {
     return (
-      <code
-        className="px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-sm font-mono border"
-        {...props}
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary hover:underline"
       >
         {children}
-      </code>
+      </a>
     );
   }
 
+  // 내부 링크
   return (
-    <div className="relative group my-6">
-      {/* 언어 표시 */}
-      {language && (
-        <div className="absolute top-3 right-3 px-2 py-1 bg-muted/80 rounded text-xs text-muted-foreground font-mono">
-          {language}
-        </div>
-      )}
-
-      {/* 코드 블록 */}
-      <pre className="overflow-x-auto p-4 rounded-lg bg-muted border text-sm">
-        <code className={className} {...props}>
-          {children}
-        </code>
-      </pre>
-    </div>
+    <Link href={href} className="text-primary hover:underline">
+      {children}
+    </Link>
   );
+};
+
+// 컴포넌트 정의
+interface MarkdownContentProps {
+  content: string;
 }
 
-/**
- * 커스텀 테이블 컴포넌트
- * 반응형 테이블 스타일링
- */
-interface CustomTableProps extends React.HTMLAttributes<HTMLTableElement> {
-  children?: React.ReactNode;
-}
-
-function CustomTable({ children, ...props }: CustomTableProps) {
-  return (
-    <div className="overflow-x-auto my-6">
-      <table className="min-w-full divide-y divide-border" {...props}>{children}</table>
-    </div>
-  );
-}
-
-/**
- * 마크다운 컴포넌트 맵핑
- */
-function createComponents(): Components {
-  return {
-    // 제목 태그들
+export const MarkdownContent = memo(({ content }: MarkdownContentProps) => {
+  // 마크다운 컴포넌트 설정
+  const components: Components = {
+    // 헤딩
     h1: ({ children }) => (
-      <h1 className="text-3xl font-bold mt-12 mb-6 first:mt-0 pb-3 border-b border-border">
+      <h1 className="text-4xl font-bold mt-8 mb-4 text-foreground">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-2xl font-bold mt-10 mb-5 first:mt-0">{children}</h2>
+      <h2 className="text-3xl font-semibold mt-6 mb-3 text-foreground">
+        {children}
+      </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl font-bold mt-8 mb-4">{children}</h3>
+      <h3 className="text-2xl font-semibold mt-5 mb-2 text-foreground">
+        {children}
+      </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-lg font-semibold mt-6 mb-3">{children}</h4>
+      <h4 className="text-xl font-semibold mt-4 mb-2 text-foreground">
+        {children}
+      </h4>
     ),
     h5: ({ children }) => (
-      <h5 className="text-base font-semibold mt-4 mb-2">{children}</h5>
+      <h5 className="text-lg font-semibold mt-4 mb-2 text-muted-foreground">
+        {children}
+      </h5>
     ),
     h6: ({ children }) => (
       <h6 className="text-sm font-semibold mt-4 mb-2 text-muted-foreground">
@@ -178,12 +101,12 @@ function createComponents(): Components {
     ),
 
     // 링크
-    a: (linkProps) => <CustomLink {...linkProps} />,
+    a: (linkProps) => <CustomLink {...linkProps} />, // eslint-disable-line react/jsx-props-no-spreading
 
     // 이미지
     img: (imageProps: React.ImgHTMLAttributes<HTMLImageElement>) => {
       if (!imageProps.src) return null;
-      return optimizeImages ? (
+      return OPTIMIZE_IMAGES ? (
         <Image
           src={imageProps.src.toString()}
           width={800}
@@ -192,149 +115,120 @@ function createComponents(): Components {
           alt={imageProps.alt || ""}
         />
       ) : (
-        <img
-          src={imageProps.src}
-          className="rounded-lg shadow-md max-w-full h-auto"
-          alt={imageProps.alt || ""}
-        />
+        <div className="relative w-full h-[400px]">
+          <Image
+            src={imageProps.src.toString()}
+            fill
+            className="rounded-lg shadow-md object-cover"
+            alt={imageProps.alt || ""}
+          />
+        </div>
       );
     },
 
-    // 코드
-    code: CustomCode,
+    // 목록
+    ul: ({ children }) => (
+      <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>
+    ),
+    ol: ({ children }) => (
+      <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>
+    ),
+    li: ({ children }) => <li className="text-foreground">{children}</li>,
 
-    // 인용문
+    // 코드 블록
+    code: ({ node, inline, className, children, ...props }) => {
+      const match = /language-(\w+)/.exec(className || "");
+      const language = match ? match[1] : "";
+
+      return !inline && match ? (
+        <div className="relative group">
+          <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  String(children).replace(/\n$/, "")
+                );
+              }}
+              className="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded"
+            >
+              복사
+            </button>
+          </div>
+          <pre className="mb-4 rounded-lg bg-[#0d1117] p-4 overflow-x-auto">
+            <code className={`language-${language}`} {...props}>
+              {children}
+            </code>
+          </pre>
+        </div>
+      ) : (
+        <code
+          className="px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-sm"
+          {...props}
+        >
+          {children}
+        </code>
+      );
+    },
+
+    // 인용구
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-primary pl-6 py-2 my-6 bg-muted/30 italic">
-        <div className="text-muted-foreground">{children}</div>
+      <blockquote className="border-l-4 border-primary pl-4 italic my-4">
+        {children}
       </blockquote>
     ),
 
-    // 목록들
-    ul: ({ children }) => (
-      <ul className="list-disc list-outside ml-6 mb-4 space-y-2">{children}</ul>
-    ),
-    ol: ({ children }) => (
-      <ol className="list-decimal list-outside ml-6 mb-4 space-y-2">
-        {children}
-      </ol>
-    ),
-    li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+    // 구분선
+    hr: () => <hr className="my-8 border-border" />, // eslint-disable-line react/jsx-key
 
-    // 테이블
-    table: CustomTable,
-    thead: ({ children }) => <thead className="bg-muted/50">{children}</thead>,
-    tbody: ({ children }) => (
-      <tbody className="divide-y divide-border">{children}</tbody>
+    // 표
+    table: ({ children }) => (
+      <div className="overflow-x-auto mb-4">
+        <table className="w-full border-collapse">{children}</table>
+      </div>
     ),
+    thead: ({ children }) => (
+      <thead className="bg-muted text-muted-foreground">{children}</thead>
+    ),
+    tbody: ({ children }) => <tbody>{children}</tbody>,
     tr: ({ children }) => (
-      <tr className="hover:bg-muted/30 transition-colors">{children}</tr>
+      <tr className="border-b border-border hover:bg-muted/50">{children}</tr>
+    ),
+    td: ({ children }) => (
+      <td className="px-4 py-2 text-foreground">{children}</td>
     ),
     th: ({ children }) => (
-      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-        {children}
-      </th>
+      <th className="px-4 py-2 text-left font-semibold">{children}</th>
     ),
-    td: ({ children }) => <td className="px-4 py-3 text-sm">{children}</td>,
-
-    // 구분선
-    hr: () => <hr className="my-8 border-border" />,
-
-    // 강조
-    strong: ({ children }) => (
-      <strong className="font-semibold text-foreground">{children}</strong>
-    ),
-    em: ({ children }) => (
-      <em className="italic text-muted-foreground">{children}</em>
-    ),
-
-    // 취소선
-    del: ({ children }) => (
-      <del className="line-through text-muted-foreground">{children}</del>
-    ),
-
-    // 체크박스 (GFM)
-    input: ({ type, checked, ...inputProps }) => {
-      if (type === "checkbox") {
-        return (
-          <input
-            type="checkbox"
-            checked={checked}
-            disabled
-            className="mr-2 accent-primary"
-            {...inputProps}
-          />
-        );
-      }
-      return <input type={type} {...inputProps} />;
-    },
   };
-}
 
-/**
- * 마크다운 콘텐츠 렌더링 컴포넌트
- */
-export const MarkdownContent = memo<MarkdownContentProps>(
-  function MarkdownContent({
-    content,
-    className = "",
-    optimizeImages = true,
-    secureLlinks = true,
-    enableTableOfContents = false,
-    size = "base",
-  }) {
-    // 크기별 클래스 정의
-    const sizeClasses = {
-      sm: "prose-sm",
-      base: "prose",
-      lg: "prose-lg",
-      xl: "prose-xl",
-    };
+  const remarkPlugins = [remarkGfm, remarkBreaks];
+  const rehypePlugins = [
+    rehypeSlug,
+    [
+      rehypeAutolinkHeadings,
+      {
+        behavior: "wrap",
+        properties: {
+          className: ["anchor"],
+        },
+      },
+    ],
+    [rehypeHighlight, { ignoreMissing: true }],
+  ];
 
-    // remark 플러그인들
-    const remarkPlugins = [
-      remarkGfm, // GitHub Flavored Markdown
-      remarkBreaks, // 줄바꿈 지원
-    ];
-
-    // rehype 플러그인들
-    const rehypePlugins = [
-      [rehypeHighlight], // 코드 하이라이팅
-      ...(enableTableOfContents
-        ? [
-            [rehypeSlug], // 헤딩에 ID 추가
-            [rehypeAutolinkHeadings, { behavior: "wrap" }], // 헤딩 링크 생성
-          ]
-        : []),
-    ];
-
-    return (
-      <div
-        className={`
-        ${sizeClasses[size]}
-        prose-headings:font-bold
-        prose-headings:text-foreground
-        prose-p:text-foreground
-        prose-strong:text-foreground
-        prose-code:text-sm
-        prose-pre:bg-muted
-        prose-pre:border
-        prose-pre:border-border
-        max-w-none
-        dark:prose-invert
-        ${className}
-      `}
+  return (
+    <article className="prose prose-gray dark:prose-invert max-w-none">
+      <ReactMarkdown
+        components={components}
+        remarkPlugins={remarkPlugins}
+        rehypePlugins={rehypePlugins}
       >
-        <ReactMarkdown
-          remarkPlugins={remarkPlugins}
-          rehypePlugins={rehypePlugins}
-          components={createComponents()}
-        >
-          {content}
-        </ReactMarkdown>
-      </div>
-    );
-  }
-);
+        {content}
+      </ReactMarkdown>
+    </article>
+  );
+});
+
+MarkdownContent.displayName = "MarkdownContent";
 
 export default MarkdownContent;
