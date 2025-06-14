@@ -76,12 +76,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  
-  // Favicon 설정
+    // Favicon 설정
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: [{ url: "/favicon.ico" }],
   },
   
   // Manifest 설정
