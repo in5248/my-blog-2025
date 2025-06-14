@@ -25,8 +25,17 @@ export const metadata: Metadata = {
     default: "My Blog - 웹 개발 기술 블로그",
     template: "%s | My Blog",
   },
-  description: "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다. 최신 개발 트렌드와 실무 경험을 공유합니다.",
-  keywords: ["웹 개발", "JavaScript", "React", "Next.js", "TypeScript", "프론트엔드", "기술 블로그"],
+  description:
+    "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다. 최신 개발 트렌드와 실무 경험을 공유합니다.",
+  keywords: [
+    "웹 개발",
+    "JavaScript",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "프론트엔드",
+    "기술 블로그",
+  ],
   authors: [{ name: "My Blog Team" }],
   creator: "My Blog",
   publisher: "My Blog",
@@ -35,15 +44,18 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+
   // Open Graph 설정
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "/",
     title: "My Blog - 웹 개발 기술 블로그",
-    description: "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다.",
+    description:
+      "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다.",
     siteName: "My Blog",
     images: [
       {
@@ -54,16 +66,17 @@ export const metadata: Metadata = {
       },
     ],
   },
-  
+
   // Twitter Card 설정
   twitter: {
     card: "summary_large_image",
     title: "My Blog - 웹 개발 기술 블로그",
-    description: "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다.",
+    description:
+      "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그입니다.",
     images: ["/images/og-image.jpg"],
     creator: "@myblog",
   },
-  
+
   // 기타 메타데이터
   robots: {
     index: true,
@@ -76,11 +89,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-    // Favicon 설정
+  // Favicon 설정
   icons: {
     icon: [{ url: "/favicon.ico" }],
   },
-  
+
   // Manifest 설정
   manifest: "/site.webmanifest",
 };
@@ -116,22 +129,25 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Blog",
-              "name": "My Blog",
-              "description": "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-              "author": {
+              name: "My Blog",
+              description:
+                "웹 개발, JavaScript, React, Next.js에 관한 기술 블로그",
+              url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+              author: {
                 "@type": "Organization",
-                "name": "My Blog Team"
+                name: "My Blog Team",
               },
-              "publisher": {
+              publisher: {
                 "@type": "Organization",
-                "name": "My Blog",
-                "logo": {
+                name: "My Blog",
+                logo: {
                   "@type": "ImageObject",
-                  "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/images/logo.png`
-                }
+                  url: `${
+                    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+                  }/images/logo.png`,
+                },
               },
-              "inLanguage": "ko-KR"
+              inLanguage: "ko-KR",
             }),
           }}
         />
@@ -142,22 +158,20 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             {/* 헤더 */}
             <Header />
-            
+
             {/* 메인 콘텐츠 영역 */}
             <main className="flex-1">
-              <div className="container mx-auto max-w-7xl px-4">
-                {children}
-              </div>
+              <div className="container mx-auto max-w-7xl px-4">{children}</div>
             </main>
-            
+
             {/* 푸터 */}
             <Footer />
           </div>
-          
+
           {/* 접근성을 위한 스킵 링크 */}
           <div className="sr-only">
-            <a 
-              href="#main-content" 
+            <a
+              href="#main-content"
               className="absolute left-0 top-0 z-50 -translate-y-full transform bg-primary px-4 py-2 text-primary-foreground transition-transform focus:translate-y-0"
             >
               메인 콘텐츠로 건너뛰기

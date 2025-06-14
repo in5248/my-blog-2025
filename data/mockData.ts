@@ -131,10 +131,10 @@ export const mockCategories: Category[] = [
  * 샘플 블로그 포스트 데이터
  */
 export const mockPosts: BlogPost[] = [
-  {
-    id: "post-1",
+  {    id: "post-1",
     title: "Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기",
     slug: "nextjs-15-app-router-modern-web-app",
+    coverImage: "https://source.unsplash.com/random/800x600?nextjs,coding",
     content:
       "# Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기\n\nNext.js 15가 출시되면서 많은 새로운 기능들이 추가되었습니다...",
     excerpt:
