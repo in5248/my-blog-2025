@@ -135,7 +135,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-1",
     title: "Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기",
     slug: "nextjs-15-app-router-modern-web-app",
-    coverImage: "https://source.unsplash.com/800x600/?cat,cute",
+    coverImage: "https://source.unsplash.com/featured/800x600",
     content:
       "# Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기\n\n" +
       "Next.js 15가 출시되면서 많은 새로운 기능들이 추가되었습니다...",
@@ -156,7 +156,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-2",
     title: "TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법",
     slug: "typescript-advanced-types-utility-types",
-    coverImage: "https://source.unsplash.com/800x600/?cat,programming",
+    coverImage: "https://source.unsplash.com/featured/800x600",
     content:
       "# TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법\n\nTypeScript를 사용하다 보면 기본 타입만으로는 복잡한 애플리케이션의 타입을 정확히 표현하기 어려운 경우가 있습니다...",
     excerpt:
