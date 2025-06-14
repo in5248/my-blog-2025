@@ -67,9 +67,9 @@ export type { Comment, CommentFormData, CommentStats };
 export const mockAuthors: Author[] = [
   {
     id: "author-1",
-    name: "김개발",
+    name: "인소윤",
     email: "kim@example.com",
-    bio: "풀스택 개발자로 웹 기술과 사용자 경험에 관심이 많습니다.",
+    bio: "한신대 재학생으로 웹 기술과 사용자 경험에 관심이 많습니다.",
     socialLinks: {
       github: "https://github.com/kimdev",
       twitter: "https://twitter.com/kimdev",
@@ -77,7 +77,7 @@ export const mockAuthors: Author[] = [
   },
   {
     id: "author-2",
-    name: "박프론트",
+    name: "인소윤",
     email: "park@example.com",
     bio: "프론트엔드 전문가, React와 Next.js를 주로 다룹니다.",
     socialLinks: {
@@ -135,7 +135,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-1",
     title: "Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기",
     slug: "nextjs-15-app-router-modern-web-app",
-    coverImage: "/images/cats/russian-blue.jpg",
+    coverImage: "https://source.unsplash.com/800x600/?cat,cute",
     content:
       "# Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기\n\n" +
       "Next.js 15가 출시되면서 많은 새로운 기능들이 추가되었습니다...",
@@ -156,7 +156,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-2",
     title: "TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법",
     slug: "typescript-advanced-types-utility-types",
-    coverImage: "https://source.unsplash.com/random/800x600?cute,cat,playing",
+    coverImage: "https://source.unsplash.com/800x600/?cat,programming",
     content:
       "# TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법\n\nTypeScript를 사용하다 보면 기본 타입만으로는 복잡한 애플리케이션의 타입을 정확히 표현하기 어려운 경우가 있습니다...",
     excerpt:
@@ -176,7 +176,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-3",
     title: "React 18의 새로운 기능들: Concurrent Features 완전 정복",
     slug: "react-18-concurrent-features-guide",
-    coverImage: "https://source.unsplash.com/random/800x600?cute,cat,sleeping",
+    coverImage: "https://source.unsplash.com/800x600/?cat,laptop",
     content:
       "# React 18의 새로운 기능들: Concurrent Features 완전 정복\n\nReact 18에서 도입된 Concurrent Features는 사용자 경험을 크게 향상시키는 혁신적인 기능들입니다...",
     excerpt:
