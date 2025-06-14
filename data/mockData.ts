@@ -135,10 +135,9 @@ export const mockPosts: BlogPost[] = [
     id: "post-1",
     title: "Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기",
     slug: "nextjs-15-app-router-modern-web-app",
-    coverImage: "https://images.unsplash.com/photo-_0eKilj7LGo",
+    coverImage: "https://source.unsplash.com/featured/?cute,cat",
     content:
       "# Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기\n\n" +
-      "![Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기](/images/posts/nextjs-15-app-router.jpg)\n\n" +
       "Next.js 15가 출시되면서 많은 새로운 기능들이 추가되었습니다...",
     excerpt:
       "Next.js 15의 App Router를 활용하여 모던하고 성능 최적화된 웹 애플리케이션을 구축하는 방법을 알아봅니다.",
