@@ -5,9 +5,9 @@
 
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Filter, SortAsc, Calendar } from "lucide-react";
+import { Search, Filter, SortAsc, Calendar, TrendingUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,9 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PostCard } from "@/components/blog/post-card";
-import { BlogPost } from "@/types";
 import {
   searchPosts,
   categories,
@@ -448,7 +447,11 @@ export default function SearchResults({
           <p className="text-muted-foreground">검색 중...</p>
         </div>
       ) : results.length === 0 ? (
-        <NoResults query={query} onSuggestionClick={handleSuggestedSearch} />
+        <NoResults
+          query={query}
+          suggestions={["Next.js", "React", "TypeScript"]} // Add default suggestions or generate based on query
+          onSuggestionClick={handleSuggestedSearch}
+        />
       ) : (
         <div>
           {/* 검색 결과 헤더 */}
@@ -457,7 +460,7 @@ export default function SearchResults({
               검색 결과 ({results.length}개)
             </h2>
             <p className="text-sm text-muted-foreground">
-              "{highlightSearchTerm(query, query)}"에 대한 검색 결과입니다
+              &ldquo;{highlightSearchTerm(query, query)}&rdquo;에 대한 검색 결과입니다
             </p>
           </div>
 

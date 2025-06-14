@@ -19,7 +19,7 @@ export function SearchDemoButton({ term }: SearchDemoButtonProps) {
         );
       }}
     >
-      "{term}" 검색
+      &quot;{term}&quot; 검색
     </button>
   );
 }

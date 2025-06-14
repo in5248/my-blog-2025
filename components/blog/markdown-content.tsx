@@ -15,7 +15,6 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { Components } from "react-markdown";
-import type { CodeComponent } from "react-markdown/lib/ast-to-react";
 
 // 코드 하이라이팅 CSS 스타일 임포트
 import "highlight.js/styles/github-dark.css";
@@ -137,7 +136,7 @@ export const MarkdownContent = memo(({ content }: MarkdownContentProps) => {
     li: ({ children }) => <li className="text-foreground">{children}</li>,
 
     // 코드 블록
-    code: ({ inline, className, children, ...props }: Parameters<CodeComponent>[0]) => {
+    code: ({ inline, className, children, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) => {
       const match = /language-(\w+)/.exec(className || "");
       const language = match ? match[1] : "";
 
