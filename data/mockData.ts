@@ -135,7 +135,7 @@ export const mockPosts: BlogPost[] = [
     id: "post-1",
     title: "Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기",
     slug: "nextjs-15-app-router-modern-web-app",
-    coverImage: "https://source.unsplash.com/random/800x600?cute,kitten,cat",
+    coverImage: "/images/cats/russian-blue.jpg",
     content:
       "# Next.js 15와 App Router로 모던 웹 애플리케이션 구축하기\n\nNext.js 15가 출시되면서 많은 새로운 기능들이 추가되었습니다...",
     excerpt:
@@ -152,7 +152,8 @@ export const mockPosts: BlogPost[] = [
     status: "published",
   },
   {
-    id: "post-2",    title: "TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법",
+    id: "post-2",
+    title: "TypeScript 마스터하기: 고급 타입과 유틸리티 타입 활용법",
     slug: "typescript-advanced-types-utility-types",
     coverImage: "https://source.unsplash.com/random/800x600?cute,cat,playing",
     content:
@@ -171,7 +172,8 @@ export const mockPosts: BlogPost[] = [
     status: "published",
   },
   {
-    id: "post-3",    title: "React 18의 새로운 기능들: Concurrent Features 완전 정복",
+    id: "post-3",
+    title: "React 18의 새로운 기능들: Concurrent Features 완전 정복",
     slug: "react-18-concurrent-features-guide",
     coverImage: "https://source.unsplash.com/random/800x600?cute,cat,sleeping",
     content:
